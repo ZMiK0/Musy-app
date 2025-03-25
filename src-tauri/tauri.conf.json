@@ -12,9 +12,11 @@
   "app": {
     "windows": [
       {
-        "title": "tfg-mp",
-        "width": 800,
-        "height": 600
+        "title": "TFG-MP",
+        "width": 1280,
+        "height": 720,
+        "minWidth": 1280,
+        "minHeight": 720
       }
     ],
     "security": {
