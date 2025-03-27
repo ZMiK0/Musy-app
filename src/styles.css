@@ -3,3 +3,40 @@
 @theme {
     --color-ac1: #c90258;
 }
+
+
+input[type="range"] {
+    @apply  rounded-full w-full h-1 appearance-none;
+    accent-color: --color-ac1;
+    background: linear-gradient(
+        to right,
+        var(--color-ac1) var(--progress),
+        oklch(0.269 0 0) var(--progress)
+    );
+}
+  
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-ac1); 
+    border: 4px solid #525252;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+  
+
+input[type="range"]::-moz-range-thumb {
+    background: var(--color-ac1);
+    border: 4px solid #525252;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+

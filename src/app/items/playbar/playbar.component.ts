@@ -10,5 +10,10 @@ import { invoke } from "@tauri-apps/api/core";
   styleUrl: '../../../styles.css'
 })
 export class PlaybarComponent {
+  progress = 0; 
 
+  onInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.progress = (parseInt(input.value) / parseInt(input.max)) * 100;
+  }
 }
