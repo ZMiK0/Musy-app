@@ -11,9 +11,15 @@ import { invoke } from "@tauri-apps/api/core";
 })
 export class PlaybarComponent {
   progress = 0; 
+  volume = 0;
 
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     this.progress = (parseInt(input.value) / parseInt(input.max)) * 100;
+  }
+
+  onVolume(event: Event) {
+    const inputVolume = event.target as HTMLInputElement;
+    this.volume = (parseInt(inputVolume.value) / parseInt(inputVolume.max)) * 100
   }
 }
