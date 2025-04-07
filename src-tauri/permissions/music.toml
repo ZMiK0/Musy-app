@@ -1,0 +1,11 @@
+[[permission]]
+identifier = "music"
+description = "Music folder acces."
+commands.allow = [
+    "read_file",
+    "exists"
+]
+
+[[scope.allow]]
+my-scope = "$HOME/Music/*"
+

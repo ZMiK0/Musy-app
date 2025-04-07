@@ -1,0 +1,6 @@
+{
+    "identifier": "music",
+    "permissions": [
+        "fs:allow-audio-read-recursive"
+    ]
+}
