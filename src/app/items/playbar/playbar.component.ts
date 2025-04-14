@@ -16,11 +16,11 @@ export class PlaybarComponent {
 
   volume:number = 0
 
-  loop_mode:string = "none"
+  loopMode:string = "none"
   shuffle:boolean = false
 
-  async onPlay() {
-    this.songManagement.onPlay();
+  async togglePlayPause() {
+    this.songManagement.togglePlayPause();
   }
 
   onInput(event: Event) {
@@ -36,11 +36,19 @@ export class PlaybarComponent {
   }
 
   cycleLoop() {
-    this.loop_mode = this.songManagement.cycleLoop();
+    this.loopMode = this.songManagement.cycleLoop();
   }
 
   toggleShuffle() {
     this.shuffle = this.songManagement.toggleShuffle();
+  }
+
+  playNext() {
+    this.songManagement.playNext();
+  }
+
+  playPrevious() {
+    this.songManagement.playPrevious();
   }
 
 }

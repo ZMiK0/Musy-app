@@ -8,9 +8,9 @@ import { SongSendingService } from './song-sending.service';
 })
 export class SongManagementService {
 
-  constructor(public songService:SongSendingService) { }
+  constructor(public songService:SongSendingService) { this.setupSongListeners() }
 
-  song: HTMLAudioElement | null = null
+  song: HTMLAudioElement = new Audio();
   
   getSong() {
     return this.song;
@@ -26,40 +26,42 @@ export class SongManagementService {
 
   isPlaying:boolean = false;
 
-  loop_mode:string = "none" //* none - playlist - single
+  loopMode:string = "none" //* none - playlist - single
   shuffle:boolean = false
 
-  playlist:string[] = ["/home/belz/Música/DoItForHer.mp3","/home/belz/Música/IntoTheSky.mp3","/home/belz/Música/TornadoOfSouls.mp3"] //!Aqui entra la playlist seleccionada, puede ser un query sql traido de rust (un invoke), este dato va a estar cambiando constantemente
   queue:string[] = [] //!Aqui lo que se va a reproducir, y no es una queue de verdad ES UNA LISTA (no implementar funciones de queue)
-  current_song:string = "/home/belz/Música/IntoTheSky.mp3" //? Cuando se abre la app no hay ninguna cancion, es cuando se le da play a una playlist o a una cancion que esto cambia (Servicio para ello creado)
+  queueSave:string[] = []
+  currentIndex:number = 0
+  currentIndexSave:number = 0
+  currentISDelay:number = 0
 
-  addToQueue() {
-    for (let i = 0; i < this.playlist.length; i++) {
-      this.queue.push(this.playlist[i])
-    }
+  private setupSongListeners(): void {
+    this.song?.addEventListener('ended', () => this.playNext());
+    this.song?.addEventListener('timeupdate', () => {
+      if (this.song) {
+        this.progress = (this.song.currentTime / this.song.duration) * 100;
+      }
+    });
   }
 
-  async selectSong(_path:string) {
+  setQueue(songs: string[]):void {
+    this.queue = [...songs];
+    this.currentIndex = 0;
+    this.loadAndPlay(this.queue[0])
+  }
+
+  async loadAndPlay(_path:string) {
     try {
       const musicDir = await audioDir();
-      const path = _path; //!Ejemplo, este path vendra de la base de datos
+      const path = _path;
       
       const fileData = await readFile(path);
       const blob = new Blob([fileData], { type: 'audio/mp3' });
       const audioUrl = URL.createObjectURL(blob);
       
-      this.song = new Audio(audioUrl);
-      
-      //*Updatea el progreso de la barra
-      this.song.addEventListener('timeupdate', () => {
-        if (this.song) {
-          this.progress = (this.song.currentTime / this.song.duration) * 100;
-        }
-      });
-      
-      this.song.addEventListener('ended', () => {
-        this.isPlaying = false;
-      });
+      this.song.src = audioUrl;
+      await this.song.play();
+      this.isPlaying = true;
       
       console.log('Canción cargada correctamente');
     } catch (error) {
@@ -67,27 +69,68 @@ export class SongManagementService {
     }
   }
 
-  async onPlay() {
-    
-    if (!this.song) await this.selectSong(this.current_song);
-    if (!this.song) return;
+  togglePlayPause() {
+    if(this.queue.length == 0) {
+      this.setQueue(["/home/belz/Música/DoItForHer.mp3","/home/belz/Música/IntoTheSky.mp3","/home/belz/Música/TornadoOfSouls.mp3"])
+    }
 
-    if (!this.isPlaying) {
-      this.song.play().then(() => console.log("Reproduciendo música..."))
-      .catch(err => console.error("Error al reproducir:", err))
-      console.log("Cancion iniciada")
+    if(!this.isPlaying) {
+      this.song.play()
     } else {
       this.song.pause()
-      console.log("Cancion pausada")
     }
     this.isPlaying = !this.isPlaying;
+  }
+
+  playNext() {
+    if ((this.currentIndex < this.queue.length - 1) && (this.loopMode == "none" || this.loopMode == "playlist")) {
+      this.currentIndex++;
+      this.currentISDelay++;
+      this.loadAndPlay(this.queue[this.currentIndex]);
+    } else if ((this.currentIndex == this.queue.length - 1) && this.loopMode == "playlist") {
+      this.currentIndex = 0;
+      this.loadAndPlay(this.queue[this.currentIndex]);
+    } else if (this.loopMode == "single") {
+      this.song.currentTime = 0
+    } else {
+      this.stop();
+    }
+    console.log("CurrentIndex: " + this.currentIndex + " CurrentIndexSave: " + this.currentIndexSave)
+  }
+
+  playPrevious() {
+    if(this.song.currentTime < 3) {
+      if((this.currentIndex > 0) && this.loopMode != "single") {
+        this.currentIndex--;
+        this.currentISDelay--;
+        this.loadAndPlay(this.queue[this.currentIndex]);
+      } else if (this.currentIndex == 0) {
+        if (this.loopMode == "playlist") {
+          this.currentIndex = this.queue.length - 1
+          this.loadAndPlay(this.queue[this.currentIndex]);
+        } else if(this.loopMode == "single") {
+          this.song.currentTime = 0
+        } else {
+          this.stop()
+        }
+      } else {
+        this.song.currentTime = 0
+      }
+    } else {
+      this.song.currentTime = 0
+    }
+    console.log("CurrentIndex: " + this.currentIndex + " CurrentIndexSave: " + this.currentIndexSave)
+  }
+
+  stop() {
+    this.song.pause();
+    this.song.currentTime = 0;
+    this.isPlaying = false;
   }
 
   isItPlaying() {
     return this.isPlaying;
   }
-
-  //* La idea general es que. Se llama a mostrar canciones, y se mapea la base de datos asignando nombres imagenes, etc. Cuando se clicka en una cancion ese nombre se usa para encontrar el path para que lo pille el Audio(). Es decir, el backend unicamente gestiona la base de datos y retorna el array de la playlist OH DIOS MIO HE VUELTO AL PASO 1
 
   onInput(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -120,25 +163,53 @@ export class SongManagementService {
   }
 
   cycleLoop() {
-    switch (this.loop_mode) {
+    switch (this.loopMode) {
       case "none":
-        this.loop_mode = "playlist";
+        this.loopMode = "playlist";
         break;
       case "playlist":
-        this.loop_mode = 'single';
+        this.loopMode = "single";
         break;
       case "single":
-        this.loop_mode = "none";
+        this.loopMode = "none";
         break;
       default:
-        this.loop_mode = "none";
+        this.loopMode = "none";
         break;
     }
-    return this.loop_mode;
+    return this.loopMode;
   }
 
   toggleShuffle() {
+    if(!this.shuffle) {
+      this.queueSave = [...this.queue];
+      this.currentIndexSave = this.currentIndex;
+      this.doShuffle();
+    } else if(this.shuffle) {
+      this.currentIndex = this.queueSave.indexOf(this.queue[this.currentIndex]);
+      this.queue = this.queueSave;
+    }
     this.shuffle = !this.shuffle;
     return this.shuffle;
+  }
+
+  doShuffle() {
+    this.queue.unshift(this.queue[this.currentIndex])
+    this.queue.splice(this.currentIndex+1,1)
+    this.currentIndex = 0
+    let firstElement = this.queue[0]
+    let queueToShuffle = this.queue.splice(1);
+    let currentIndex2 = queueToShuffle.length;
+
+    while (currentIndex2 != 0) {
+
+      let randomIndex = Math.floor(Math.random() * currentIndex2);
+      currentIndex2--;
+
+      [queueToShuffle[currentIndex2], queueToShuffle[randomIndex]] = [queueToShuffle[randomIndex], queueToShuffle[currentIndex2]];
+    }
+    queueToShuffle.unshift(firstElement)
+    this.queue = queueToShuffle
+    
   }
 }
