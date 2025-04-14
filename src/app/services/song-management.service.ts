@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { readFile } from '@tauri-apps/plugin-fs';
 import { audioDir } from '@tauri-apps/api/path';
 import { SongSendingService } from './song-sending.service';
+import { invoke } from '@tauri-apps/api/core';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +36,7 @@ export class SongManagementService {
   currentIndexSave:number = 0
   currentISDelay:number = 0
 
-  private setupSongListeners(): void {
+  private async setupSongListeners() {
     this.song?.addEventListener('ended', () => this.playNext());
     this.song?.addEventListener('timeupdate', () => {
       if (this.song) {
@@ -52,7 +53,6 @@ export class SongManagementService {
 
   async loadAndPlay(_path:string) {
     try {
-      const musicDir = await audioDir();
       const path = _path;
       
       const fileData = await readFile(path);
@@ -69,9 +69,18 @@ export class SongManagementService {
     }
   }
 
-  togglePlayPause() {
+  //["/home/belz/Música/DoItForHer.mp3","/home/belz/Música/IntoTheSky.mp3","/home/belz/Música/TornadoOfSouls.mp3"]
+  async togglePlayPause() {
+    const musicDir = await audioDir();
     if(this.queue.length == 0) {
-      this.setQueue(["/home/belz/Música/DoItForHer.mp3","/home/belz/Música/IntoTheSky.mp3","/home/belz/Música/TornadoOfSouls.mp3"])
+      invoke('get_music_dir', { path:musicDir }).then((paths: unknown) => {
+        const songPaths = paths as string[];
+        this.setQueue(songPaths);
+      })
+      .catch(error => {
+        console.error('Error al cargar directorio:', error);
+      });
+      
     }
 
     if(!this.isPlaying) {
@@ -132,7 +141,7 @@ export class SongManagementService {
     return this.isPlaying;
   }
 
-  onInput(event: Event) {
+  async onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     const newTime = parseInt(input.value);
     if (this.song) {

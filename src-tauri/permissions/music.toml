@@ -1,9 +1,10 @@
 [[permission]]
 identifier = "music"
-description = "Music folder acces."
+description = "Music folder access."
 commands.allow = [
     "read_file",
-    "exists"
+    "exists",
+    "get_music_dir"
 ]
 
 [[scope.allow]]
