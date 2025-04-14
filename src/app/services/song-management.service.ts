@@ -48,7 +48,7 @@ export class SongManagementService {
   setQueue(songs: string[]):void {
     this.queue = [...songs];
     this.currentIndex = 0;
-    this.loadAndPlay(this.queue[0])
+    this.loadAndPlay(this.queue[0]) //Esta sobra
   }
 
   async loadAndPlay(_path:string) {
