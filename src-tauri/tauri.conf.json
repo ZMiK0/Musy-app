@@ -1,18 +1,18 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "tfg-mp",
-  "version": "0.1.0",
-  "identifier": "com.tfg-mp.app",
+  "productName": "musy",
+  "version": "0.2.0",
+  "identifier": "com.musy.app",
   "build": {
     "beforeDevCommand": "npm run start",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist/tfg-mp/browser"
+    "frontendDist": "../dist/musy/browser"
   },
   "app": {
     "windows": [
       {
-        "title": "TFG-MP",
+        "title": "Musy",
         "width": 1280,
         "height": 720,
         "minWidth": 1280,

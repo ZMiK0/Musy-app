@@ -26,6 +26,6 @@ export class SidebarComponent {
     const data_dir = await appDataDir();
     console.log(music_dir)
     console.log(data_dir)
-    await invoke('sync_lib', {music_dir: '/home/belz/Música', app_data_dir: '/home/belz/.local/share/com.tfg-mp.app'})
+    await invoke('sync_lib', {music_dir: music_dir, app_data_dir: data_dir})
   }
 }

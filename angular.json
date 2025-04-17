@@ -6,7 +6,7 @@
     "analytics": false
   },
   "projects": {
-    "tfg-mp": {
+    "musy": {
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -15,7 +15,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/tfg-mp",
+            "outputPath": "dist/Musy",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -53,10 +53,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "tfg-mp:build:production"
+              "buildTarget": "musy:build:production"
             },
             "development": {
-              "buildTarget": "tfg-mp:build:development"
+              "buildTarget": "musy:build:development"
             }
           },
           "defaultConfiguration": "development"

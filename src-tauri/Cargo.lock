@@ -3,6 +3,23 @@
 version = 4
 
 [[package]]
+name = "Musy"
+version = "0.2.0"
+dependencies = [
+ "blake3",
+ "dirs 4.0.0",
+ "lofty",
+ "rusqlite",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-fs",
+ "tauri-plugin-opener",
+ "walkdir",
+]
+
+[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3957,23 +3974,6 @@ dependencies = [
  "futf",
  "mac",
  "utf-8",
-]
-
-[[package]]
-name = "tfg-mp"
-version = "0.1.0"
-dependencies = [
- "blake3",
- "dirs 4.0.0",
- "lofty",
- "rusqlite",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-fs",
- "tauri-plugin-opener",
- "walkdir",
 ]
 
 [[package]]
