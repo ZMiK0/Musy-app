@@ -25,4 +25,6 @@ serde_json = "1"
 dirs = "4.0"
 tauri-plugin-fs = "2"
 walkdir = "2"
-
+lofty = "0.22.3"
+rusqlite = { version = "0.34.0", features = ["bundled"] }
+blake3 = "1.8.1"

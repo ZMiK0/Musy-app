@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { invoke } from "@tauri-apps/api/core";
 import { ButtonComponent } from "./playlist-button/button.component";
 import { MainScreenStatusService } from '../../services/main-screen-status.service';
-import { audioDir } from '@tauri-apps/api/path';
+import { audioDir, appDataDir } from '@tauri-apps/api/path';
 import { SongManagementService } from '../../services/song-management.service';
 
 @Component({
@@ -22,13 +22,10 @@ export class SidebarComponent {
   }
 
   async reloadPlaylist() {
-    const musicDir = await audioDir();
-    invoke('get_music_dir', { path:musicDir }).then((paths: unknown) => {
-      const songPaths = paths as string[];
-      this.songManagement.setQueue(songPaths);
-    })
-    .catch(error => {
-      console.error('Error al cargar directorio:', error);
-    });
+    const music_dir = await audioDir();
+    const data_dir = await appDataDir();
+    console.log(music_dir)
+    console.log(data_dir)
+    await invoke('sync_lib', {music_dir: '/home/belz/Música', app_data_dir: '/home/belz/.local/share/com.tfg-mp.app'})
   }
 }
