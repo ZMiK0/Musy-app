@@ -1,7 +1,7 @@
-<div class="grid grid-cols-1 grid-rows-1 rounded-2xl min-w-64 h-full">
-    <div class="gap-4 grid grid-cols-1 bg-neutral-900 p-4 rounded-2xl">
+<div class="flex flex-col grid-rows-1 rounded-2xl min-w-64 h-full">
+    <div class="flex flex-col gap-4 bg-neutral-900 p-4 rounded-2xl h-full">
         <div class="flex justify-between">
-            <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 rounded-2xl hover:scale-105 duration-200 transform" (click)="setHome()">
+            <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 rounded-2xl h-12 hover:scale-105 duration-200 transform" (click)="setHome()">
                 <div class="flex gap-6">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="ml-3 w-8 h-8"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M575.8 255.5c0 18-15 32.1-32 32.1l-32 0 .7 160.2c0 2.7-.2 5.4-.5 8.1l0 16.2c0 22.1-17.9 40-40 40l-16 0c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1L416 512l-24 0c-22.1 0-40-17.9-40-40l0-24 0-64c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32 14.3-32 32l0 64 0 24c0 22.1-17.9 40-40 40l-24 0-31.9 0c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2l-16 0c-22.1 0-40-17.9-40-40l0-112c0-.9 0-1.9 .1-2.8l0-69.7-32 0c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/></svg>
                     <div class="-ml-2 text-left">
@@ -10,15 +10,15 @@
     
                 </div>
             </button>
-            <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-white hover:fill-ac1 p-2 rounded-2xl hover:scale-105 duration-200 transform" (click)="reloadPlaylist()">
+            <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-white hover:fill-ac1 p-2 rounded-2xl h-12 hover:scale-105 duration-200 transform" (click)="reloadPlaylist()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="m-1 size-5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M48.5 224L40 224c-13.3 0-24-10.7-24-24L16 72c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2L98.6 96.6c87.6-86.5 228.7-86.2 315.8 1c87.5 87.5 87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3c-62.2-62.2-162.7-62.5-225.3-1L185 183c6.9 6.9 8.9 17.2 5.2 26.2s-12.5 14.8-22.2 14.8L48.5 224z"/></svg>
             </button>
         </div>
         
         
         <!--Aqui habria que mapear todas las playlist, voy a simplemente poner ejemplos-->
-        <div class="gap-2 grid grid-cols-1 bg-neutral-600/20 p-2 border-2 border-neutral-800 rounded-2xl h-full overflow-y-scroll scroll-smooth">
-            <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 rounded-2xl hover:scale-105 duration-200 transform">
+        <div class="flex flex-col gap-2 bg-neutral-600/20 p-2 border-2 border-neutral-800 rounded-2xl h-full overflow-y-scroll scroll-smooth">
+            <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 rounded-2xl h-12 hover:scale-105 duration-200 transform">
                 <div class="flex gap-3">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="ml-3 w-8 h-8"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
                     <div class="-ml-2 text-left">
@@ -28,7 +28,8 @@
                 </div>
             </button>
             <hr class="rounded-xl text-neutral-600">
-            <app-playlist-button *ngFor="let item of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]"></app-playlist-button>
+            
+            <app-playlist-button *ngFor="let playlist of playlists" playlistName={{playlist.name}} playlistDate={{playlist.creation_date}} playlistCoverPath={{getCoverPath(playlist.cover_path)}} [playlistIsStarred]=playlist.isStarred></app-playlist-button>
         </div>
         
     </div>

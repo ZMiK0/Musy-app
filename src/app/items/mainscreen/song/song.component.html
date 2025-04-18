@@ -1,9 +1,16 @@
 <button class="hover:bg-ac1/40 hover:shadow-md hover:shadow-neutral-800 p-2 rounded-2xl w-full">
-    <div class="flex gap-5">
-        <div class="bg-ac1 rounded-xl w-14 h-14"></div> <!--Imagen-->
-        <div class="grid grid-cols-1 text-left">
-            <h1 class="text-xl">Título</h1>
-            <p class="text-neutral-400 text-sm">Artista</p>
+    <div class="flex justify-between">
+        <div class="flex gap-5">
+            <img [src]="coverUrl" class="rounded-xl size-14">
+            <div class="grid grid-cols-1 text-left">
+                <h1 class="text-xl">{{title}}</h1>
+                <p class="text-neutral-400 text-sm">{{artist}}</p>
+            </div>
+        </div>
+        <div class="flex gap-5">
+            <h1 class="text-neutral-400 text-sm">{{duration}}</h1>
+            <button>hola</button> <!--Boton de añadir a la cola-->
         </div>
     </div>
+    
 </button>

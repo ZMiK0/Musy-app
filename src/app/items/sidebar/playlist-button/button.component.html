@@ -1,9 +1,9 @@
 <button class="hover:bg-ac1/40 hover:shadow-md hover:shadow-neutral-800 p-2 rounded-2xl w-full hover:scale-105 duration-50 transform" (click)="setPlaylistOnMainScreen()">
     <div class="flex gap-3">
-        <div class="bg-ac1 rounded-xl w-14 h-14"></div> <!--Imagen-->
+        <img class="rounded-xl size-14" src={{playlistCoverPath}}>
         <div class="grid grid-cols-1 text-left">
-            <h1 class="text-xl">Título</h1>
-            <p class="text-neutral-400 text-sm">X Canciones</p>
+            <h1 class="w-32 text-xl truncate">{{playlistName}}</h1>
+            <p class="text-neutral-400 text-sm">{{playlistDate}}</p>
         </div>
     </div>
 </button>
