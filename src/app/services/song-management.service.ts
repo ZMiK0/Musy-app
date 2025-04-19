@@ -141,7 +141,7 @@ export class SongManagementService {
     return this.isPlaying;
   }
 
-  async onInput(event: Event) {
+  onInput(event: Event) {
     const input = event.target as HTMLInputElement;
     const newTime = parseInt(input.value);
     if (this.song) {

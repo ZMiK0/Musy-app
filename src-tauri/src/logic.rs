@@ -21,24 +21,38 @@ fn create_dir(path:PathBuf) -> std::io::Result<()> {
 fn create_db(path:PathBuf) -> std::io::Result<()> {
     let conn = Connection::open(path.join("playlists.db")).expect("Error");
     conn.execute("create table if not exists all_songs(
-    id text primary key not null,
-    path text not null,
-    title text not null,
-    artist text,
-    album text,
-    year text,
-    duration text,
-    cover_path text,
-    isStarred boolean default false
-);",()).expect("ERROR2");
+        id text primary key not null,
+        path text not null,
+        title text not null,
+        artist text,
+        album text,
+        year text,
+        duration text,
+        cover_path text,
+        isStarred boolean default false
+    );",()).expect("ERROR2");
 
     conn.execute("create table if not exists playlists (
-    id integer primary key autoincrement,
-    name text not null unique,
-    creation_date integer default (strftime('%s', 'now')),
-    isStarred boolean default false
-)", ()).expect("ERROR3");
+        id integer primary key autoincrement,
+        name text not null unique,
+        creation_date DATE default CURRENT_DATE,
+        cover_path text default '',
+        isStarred boolean default false
+    )", ()).expect("ERROR3");
+
+    conn.execute("create table if not exists song_playlist(
+        playlist_id integer not null,
+        song_id integer not null,
+        foreign key (playlist_id) references playlists(id) ON DELETE CASCADE,
+        foreign key (song_id) references all_songs(id) ON DELETE CASCADE,
+        primary key (playlist_id, song_id)
+    );",() ).expect("ERROR4");
+
+conn.execute("INSERT OR REPLACE INTO playlists (id, name) VALUES (?1,?2);", (0,"All Songs",)).expect("ERROR WHILE INSERTING");
+
+
     Ok(())
+
 }
 
 fn create_cover(path:PathBuf, title:&str, image:Option<Vec<u8>>) -> std::io::Result<PathBuf> {
@@ -131,5 +145,91 @@ fn clean(database_path: PathBuf) -> Result<()> {
     tx.commit()?;
     println!("Operation completed.");
     Ok(())
+
+}
+
+pub fn add_playlist(name:String, cover_path:String, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
+
+    conn.execute("INSERT INTO playlists (name, cover_path) VALUES (?1, ?2);", (name, cover_path)).expect("ERROR WHILE INSERTING");
+
+    Ok(())
+}
+
+pub fn add_song_to_playlist(playlist_id:i64, song_id:i64, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path))?;
+
+    conn.execute("INSERT INTO song_playlist (playlist_id, song_id) VALUES (?1,?2);",(playlist_id, song_id)).expect("ERROR WHILE INSERTING SONG");
+
+    Ok(())
+}
+
+#[derive(serde::Serialize)]
+pub struct Playlist {
+    id: i64,
+    name: String,
+    creation_date: String,
+    cover_path: String,
+    #[serde(rename = "isStarred")]
+    is_starred: bool,
+}
+
+#[derive(serde::Serialize)]
+pub struct Song {
+    id: String,
+    path: String,
+    title: String,
+    artist: String,
+    album: String,
+    year: String,
+    duration: String,
+    #[serde(rename = "coverPath")]
+    cover_path: String,
+    #[serde(rename = "isStarred")]
+    is_starred: bool,
+}
+
+pub fn get_all_playlists(db_path:String) -> Result<Vec<Playlist>, String> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db")).map_err(|e| e.to_string())?;
+
+    let mut stmt = conn.prepare("SELECT id, name, creation_date, cover_path, isStarred FROM playlists").map_err(|e| e.to_string())?;
+
+    let playlists = stmt.query_map([], |row| {
+        Ok(Playlist {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            creation_date: row.get(2)?,
+            cover_path: row.get(3)?,
+            is_starred: row.get(4)?,
+        })
+    }).map_err(|e| e.to_string())?
+    .collect::<Result<Vec<_>, _>>()
+    .map_err(|e| e.to_string())?;
+
+    Ok(playlists)
+}
+
+pub fn get_all_songs(db_path:String) -> Result<Vec<Song>, String> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db")).map_err(|e| e.to_string())?;
+
+    let mut stmt = conn.prepare("SELECT id, path, title, artist, album, year, duration, cover_path, isStarred FROM all_songs").map_err(|e| e.to_string())?;
+
+    let all_songs = stmt.query_map([], |row| {
+        Ok(Song {
+            id: row.get(0)?,
+            path: row.get(1)?,
+            title: row.get(2)?,
+            artist: row.get(3)?,
+            album: row.get(4)?,
+            year: row.get(5)?,
+            duration: row.get(6)?,
+            cover_path: row.get(7)?,
+            is_starred: row.get(8)?,
+        })
+    }).map_err(|e| e.to_string())?
+    .collect::<Result<Vec<_>, _>>()
+    .map_err(|e| e.to_string())?;
+
+    Ok(all_songs)
 
 }

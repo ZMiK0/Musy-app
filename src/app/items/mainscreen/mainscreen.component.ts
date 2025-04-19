@@ -5,6 +5,7 @@ import { SongSendingService } from '../../services/song-sending.service';
 import { SongComponent } from "./song/song.component";
 import { MainScreenStatusService } from '../../services/main-screen-status.service';
 import { HomeitemComponent } from "./homeitem/homeitem.component";
+import { appDataDir } from '@tauri-apps/api/path';
 
 @Component({
   selector: 'app-mainscreen',
@@ -14,16 +15,8 @@ import { HomeitemComponent } from "./homeitem/homeitem.component";
   styleUrl: '../../../styles.css'
 })
 export class MainScreenComponent {
-  /**
-  song="/home/belz/Música/DoItForHer.mp3"
-
-  constructor(public songService:SongSendingService) {}
-
-  sendSong() {
-    this.songService.setSong(this.song)
-    console.log("Song sent!")
-  }
-  */
+  
   constructor (public mainScreenStatus:MainScreenStatusService) {}
-
+  
 }
+
