@@ -9,6 +9,7 @@
     "fs:allow-audio-read-recursive",
     "music",
     "dialog:allow-open",
-    "fs:allow-home-read-recursive"
+    "fs:allow-home-read-recursive",
+    "fs:allow-appdata-write-recursive"
   ]
 }

@@ -37,7 +37,7 @@ export class SongComponent {
 
     if (this.coverUrl) {
       URL.revokeObjectURL(this.coverUrl);
-  }
+    }
 
     return URL.createObjectURL(blob);
 

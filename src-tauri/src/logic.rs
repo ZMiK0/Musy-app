@@ -13,7 +13,6 @@ const DEFAULT_BLACK_IMAGE: &[u8] = include_bytes!("../black.jpg");
 
 fn create_dir(path:PathBuf) -> std::io::Result<()> {
     let new_path = path.join("covers");
-    println!("{}",new_path.display());
     fs::create_dir_all(&new_path).expect("Error");
     Ok(())
 }
