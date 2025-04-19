@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { readFile } from '@tauri-apps/plugin-fs';
+import { SongSendingService } from '../../../services/song-sending.service';
 
 @Component({
   selector: 'app-song',
@@ -9,6 +10,8 @@ import { readFile } from '@tauri-apps/plugin-fs';
   styleUrl: '../../../../styles.css'
 })
 export class SongComponent {
+
+  constructor (public songSending:SongSendingService) {}
 
   @Input() id!: string;
   @Input() path!: string;
@@ -40,6 +43,15 @@ export class SongComponent {
     }
 
     return URL.createObjectURL(blob);
+
+  }
+
+  playSong() {
+    this.songSending.setSong(this.path,this.title,this.artist,this.coverUrl)
+    console.log("Sending song: " + this.path);
+  }
+
+  addSongToQueue() {
 
   }
 

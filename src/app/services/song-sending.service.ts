@@ -1,20 +1,16 @@
 import { Injectable } from '@angular/core';
+import { SongManagementService } from './song-management.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SongSendingService {
 
-  constructor() { }
-  song_path:string = "default"
+  constructor(public songManagement:SongManagementService) { }
 
-  setSong(song:string) {
-    this.song_path = song
+  setSong(song:string, title:string, artist:string, coverPath:string) {
+    this.songManagement.setOneSong(song, title, artist, coverPath)
     console.log("Song set!")
   }
   
-  getSong() {
-    console.log("Song got!")
-    return this.song_path;
-  }
 }

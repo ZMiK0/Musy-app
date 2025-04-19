@@ -8,8 +8,11 @@ import { invoke } from '@tauri-apps/api/core';
   providedIn: 'root'
 })
 export class SongManagementService {
+  songCover:string = ""
+  songTitle:string = ""
+  songArtist:string = ""
 
-  constructor(public songService:SongSendingService) { this.setupSongListeners() }
+  constructor() { this.setupSongListeners() }
 
   song: HTMLAudioElement = new Audio();
   
@@ -45,11 +48,24 @@ export class SongManagementService {
     });
   }
 
-  setQueue(songs: string[]):void {
+  setQueue(songs:string[], title:string[], artist:string[], coverPath:string[]) {
     this.queue = [...songs];
     this.currentIndex = 0;
-    this.loadAndPlay(this.queue[0]) //Esta sobra
   }
+
+  addQueue(songs: string[], title:string[], artist:string[], coverPath:string[]) {}
+
+  setOneSong(song:string, title:string, artist:string, coverPath:string) {
+    this.queue = []
+    this.queue.push(song)
+    this.currentIndex = 0;
+    this.songTitle = title;
+    this.songArtist = artist;
+    this.songCover = coverPath;
+    this.loadAndPlay(this.queue[0])
+  }
+
+  addOneSong(song:string, title:string, artist:string, coverPath:string) {}
 
   async loadAndPlay(_path:string) {
     try {
@@ -71,18 +87,6 @@ export class SongManagementService {
 
   //["/home/belz/Música/DoItForHer.mp3","/home/belz/Música/IntoTheSky.mp3","/home/belz/Música/TornadoOfSouls.mp3"]
   async togglePlayPause() {
-    const musicDir = await audioDir();
-    if(this.queue.length == 0) {
-      invoke('get_music_dir', { path:musicDir }).then((paths: unknown) => {
-        const songPaths = paths as string[];
-        this.setQueue(songPaths);
-      })
-      .catch(error => {
-        console.error('Error al cargar directorio:', error);
-      });
-      
-    }
-
     if(!this.isPlaying) {
       this.song.play()
     } else {
@@ -221,4 +225,5 @@ export class SongManagementService {
     this.queue = queueToShuffle
     
   }
+
 }

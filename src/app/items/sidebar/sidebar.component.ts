@@ -50,8 +50,6 @@ export class SidebarComponent {
     }
   }
 
-  
-
   newPlaylist() {
     this.modal.isOpen = true;
   }
