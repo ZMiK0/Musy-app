@@ -6,7 +6,8 @@ commands.allow = [
     "exists",
     "sync_lib",
     "get_all_playlists",
-    "get_all_songs"
+    "get_all_songs",
+    "create_playlist"
 ]
 
 [[scope.allow]]

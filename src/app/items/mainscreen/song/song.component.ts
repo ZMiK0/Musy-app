@@ -35,6 +35,10 @@ export class SongComponent {
     
     const blob = new Blob([fileData], { type: 'image/jpeg' });
 
+    if (this.coverUrl) {
+      URL.revokeObjectURL(this.coverUrl);
+  }
+
     return URL.createObjectURL(blob);
 
   }

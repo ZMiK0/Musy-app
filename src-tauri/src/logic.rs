@@ -148,8 +148,8 @@ fn clean(database_path: PathBuf) -> Result<()> {
 
 }
 
-pub fn create_playlist(name:String, cover_path:String, db_path:String) -> Result<()> {
-    let conn = Connection::open(PathBuf::from(db_path))?;
+pub fn add_playlist(name:String, cover_path:String, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
 
     conn.execute("INSERT INTO playlists (name, cover_path) VALUES (?1, ?2);", (name, cover_path)).expect("ERROR WHILE INSERTING");
 

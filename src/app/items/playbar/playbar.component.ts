@@ -23,7 +23,7 @@ export class PlaybarComponent {
     this.songManagement.togglePlayPause();
   }
 
-  onInput(event: Event) {
+  async onInput(event: Event) {
     this.songManagement.onInput(event);
   }
 
