@@ -1,17 +1,21 @@
 import { Component, Input } from '@angular/core';
 import { readFile } from '@tauri-apps/plugin-fs';
 import { SongSendingService } from '../../../services/song-sending.service';
+import { CommonModule } from '@angular/common';
+import { SongAddingService } from '../../../services/song-adding.service';
+import { PlaylistComponent } from "../playlist-button/playlist/playlist.component";
 
 @Component({
   selector: 'app-song',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, PlaylistComponent],
   templateUrl: './song.component.html',
   styleUrl: '../../../../styles.css'
 })
 export class SongComponent {
+  isModalOpen: boolean = false;
 
-  constructor (public songSending:SongSendingService) {}
+  constructor (public songSending:SongSendingService, public songAdding:SongAddingService) {}
 
   @Input() id!: string;
   @Input() path!: string;
@@ -27,7 +31,6 @@ export class SongComponent {
 
   async ngOnInit() {
     this.coverUrl = await this.getCoverPath();
-    console.log(this.coverUrl)
   }
 
   async getCoverPath(): Promise<string> {
@@ -53,6 +56,16 @@ export class SongComponent {
 
   addSongToQueue() {
 
+  }
+
+  addSongToPlaylist() {
+    this.songAdding.getAllPlaylists();
+    this.isModalOpen = true;
+  }
+
+  close() {
+    this.isModalOpen = false;
+    this.songAdding.letGo();
   }
 
 }

@@ -5,7 +5,6 @@ import { ButtonComponent } from "./playlist-button/button.component";
 import { MainScreenStatusService } from '../../services/main-screen-status.service';
 import { audioDir, appDataDir, join, BaseDirectory } from '@tauri-apps/api/path';
 import { SongManagementService } from '../../services/song-management.service';
-import { ModalService } from '../../services/modal.service';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { mkdir } from '@tauri-apps/plugin-fs';
@@ -19,8 +18,11 @@ import { mkdir } from '@tauri-apps/plugin-fs';
 })
 export class SidebarComponent {
   playlists: Playlist[] = []
+  name:string = ""
+  isModalOpen:boolean = false;
+  coverPath: string = "assets/black.jpg"
 
-  constructor (public mainScreenStatus:MainScreenStatusService, public songManagement:SongManagementService, public modal:ModalService ) {}
+  constructor (public mainScreenStatus:MainScreenStatusService, public songManagement:SongManagementService) {}
 
   async ngOnInit() {
     this.playlists = await this.getAllPlaylists();
@@ -51,11 +53,14 @@ export class SidebarComponent {
   }
 
   newPlaylist() {
-    this.modal.isOpen = true;
+    this.isModalOpen = true;
   }
 
   async onInput(event: Event) {
-    this.modal.onInput(event)
+    const input = event.target as HTMLInputElement;
+    const newName = input.value;
+    this.name = newName;
+    console.log(this.name)
   }
 
   async createThumbnail(blob: Blob, maxWidth: number, maxHeight: number): Promise<Uint8Array> {
@@ -125,23 +130,25 @@ export class SidebarComponent {
     let newPath = data_dir + "/pcovers/" + randomName + ".jpg";
     console.log(newPath)
 
-    this.modal.coverPath = newPath;
+    this.coverPath = newPath;
   }
 
   async createPlaylist() {
     const data_dir = await appDataDir();
-    invoke('create_playlist', {name: this.modal.name, cover_path: this.modal.coverPath, db_path: data_dir})
+    invoke('create_playlist', {name: this.name, cover_path: this.coverPath, db_path: data_dir})
     console.log("Playlist creada")
     this.close()
     this.playlists = await this.getAllPlaylists();
-    this.modal.coverPath = "assets/black.jpg"
+    this.coverPath = "assets/black.jpg"
   }
 
   close() {
-    this.modal.isOpen = false
+    this.isModalOpen = false
   }
   
 }
+
+
 
 interface Playlist {
   id: number;

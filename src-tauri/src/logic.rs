@@ -41,7 +41,7 @@ fn create_db(path:PathBuf) -> std::io::Result<()> {
 
     conn.execute("create table if not exists song_playlist(
         playlist_id integer not null,
-        song_id integer not null,
+        song_id text not null,
         foreign key (playlist_id) references playlists(id) ON DELETE CASCADE,
         foreign key (song_id) references all_songs(id) ON DELETE CASCADE,
         primary key (playlist_id, song_id)
@@ -155,10 +155,10 @@ pub fn add_playlist(name:String, cover_path:String, db_path:String) -> Result<()
     Ok(())
 }
 
-pub fn add_song_to_playlist(playlist_id:i64, song_id:i64, db_path:String) -> Result<()> {
-    let conn = Connection::open(PathBuf::from(db_path))?;
+pub fn add_song(playlist_id:i64, song_id:String, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
 
-    conn.execute("INSERT INTO song_playlist (playlist_id, song_id) VALUES (?1,?2);",(playlist_id, song_id)).expect("ERROR WHILE INSERTING SONG");
+    conn.execute("INSERT OR REPLACE INTO song_playlist (playlist_id, song_id) VALUES (?1,?2);",(playlist_id, song_id)).expect("ERROR WHILE INSERTING SONG");
 
     Ok(())
 }

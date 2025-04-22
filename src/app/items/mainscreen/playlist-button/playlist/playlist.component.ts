@@ -1,17 +1,18 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { invoke } from "@tauri-apps/api/core";
-import { MainScreenStatusService } from '../../../services/main-screen-status.service';
+import { MainScreenStatusService } from '../../../../services/main-screen-status.service';
 import { readFile } from '@tauri-apps/plugin-fs';
+import { CommonModule } from '@angular/common';
+import { appDataDir } from '@tauri-apps/api/path';
+import { invoke } from '@tauri-apps/api/core';
 
 @Component({
-  selector: 'app-playlist-button',
+  selector: 'app-playlist',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './button.component.html',
-  styleUrl: '../../../../styles.css'
+  templateUrl: './playlist.component.html',
+  styleUrl: '../../../../../styles.css'
 })
-export class ButtonComponent {
+export class PlaylistComponent {
   coverPath = 'assets/black.jpg';
 
   constructor (public mainScreenStatus:MainScreenStatusService) {}
@@ -20,29 +21,16 @@ export class ButtonComponent {
 
   @Input() playlistName!: string;
 
-  @Input() playlistDate!: string;
-
   @Input() playlistCoverPath!: string;
 
-  @Input() playlistIsStarred!: boolean;
+  @Input() songId!: string;
 
   async ngOnInit() {
     this.coverPath = await this.getCoverPath();
   }
 
-  setPlaylistOnMainScreen() {
-    this.mainScreenStatus.setPlaylist(this.playlistId, this.playlistName, this.playlistDate, this.coverPath, this.playlistIsStarred);
-    if (this.playlistId == 0) {
-      this.mainScreenStatus.getAllSongs()
-    } else {
-      console.log("Aqui sacar canciones de la playlist")
-    }
-    
-  }
-
   async getCoverPath(): Promise<string> {
     if (!this.coverPath) return 'assets/black.jpg';
-    console.log("Hola")
 
     const fileData = await readFile(this.playlistCoverPath);
     
@@ -53,5 +41,11 @@ export class ButtonComponent {
     }
 
     return URL.createObjectURL(blob);
+  }
+
+  async addSongToPlaylist() {
+    const data_dir = await appDataDir();
+    invoke('add_song_to_playlist', {playlist_id: this.playlistId, song_id: this.songId, db_path: data_dir})
+    console.log("Canción añadida: " + this.songId + " en: " + this.playlistName)
   }
 }
