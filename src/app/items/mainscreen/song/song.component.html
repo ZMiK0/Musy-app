@@ -13,6 +13,9 @@
             </div>
         </button>
         <div class="flex gap-5">
+            <button class="flex gap-5 bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-300 hover:fill-ac1 hover:fill-ac1 mt-2.5 border-2 border-neutral-800 hover:border-ac1/40 rounded-xl size-8 hover:scale-105 duration-200" (click)="removeSongFromPlaylist()" *ngIf="playlistId != 0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="mt-1 ml-1 size-5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/></svg>
+            </button>
             <button class="flex gap-5 bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-300 hover:fill-ac1 hover:fill-ac1 mt-2.5 border-2 border-neutral-800 hover:border-ac1/40 rounded-xl size-8 hover:scale-105 duration-200" (click)="addSongToPlaylist()">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="size-7"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
             </button>
@@ -29,7 +32,7 @@
     <div class="flex flex-col gap-2 bg-neutral-900 p-2 border-2 border-neutral-800 rounded-2xl h-80">
         <h1 class="text-2xl">Add to Playlist</h1>
         <div class="flex flex-col gap-2 bg-neutral-600/20 p-2 border-2 border-neutral-800 rounded-2xl h-full overflow-y-scroll scroll-smooth">
-            <app-playlist *ngFor="let playlist of this.songAdding.playlists" [playlistId]="playlist.id" playlistName={{playlist.name}} playlistCoverPath={{playlist.cover_path}} [songId]="this.id" ></app-playlist>
+            <app-playlist *ngFor="let playlist of this.songAdding.playlists" [playlistId]="playlist.id" playlistName={{playlist.name}} playlistCoverPath={{playlist.cover_path}} [songId]="this.id" (click)="close()"></app-playlist>
         </div>
         <div class="flex gap-4 mt-auto">
             <button (click)="close()" class="bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 border-2 border-neutral-800 hover:border-ac1/40 rounded-2xl w-full h-fit hover:scale-105 duration-200 transform">Close</button>

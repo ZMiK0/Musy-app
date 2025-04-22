@@ -7,8 +7,10 @@ commands.allow = [
     "sync_lib",
     "get_all_playlists",
     "get_all_songs",
+    "get_playlist_songs",
     "create_playlist",
-    "add_song_to_playlist"
+    "add_song_to_playlist",
+    "remove_song_from_playlist"
 ]
 
 [[scope.allow]]

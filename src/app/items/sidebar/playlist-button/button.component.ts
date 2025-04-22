@@ -35,7 +35,7 @@ export class ButtonComponent {
     if (this.playlistId == 0) {
       this.mainScreenStatus.getAllSongs()
     } else {
-      console.log("Aqui sacar canciones de la playlist")
+      this.mainScreenStatus.getPlaylistSongs()
     }
     
   }

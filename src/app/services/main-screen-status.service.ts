@@ -46,7 +46,16 @@ export class MainScreenStatusService {
 
   }
 
-  
+  async getPlaylistSongs() {
+    const data_dir = await appDataDir();
+    try {
+      this.songs = await invoke<Song[]>('get_playlist_songs', {playlist_id: this.pId, db_path: data_dir});
+      //console.log(this.songs[0].coverPath)
+    } catch (error) {
+      console.error('Error fetching songs:', error);
+      this.songs = [];
+    }
+  }
 
 }
 

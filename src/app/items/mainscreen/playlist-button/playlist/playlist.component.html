@@ -1,7 +1,6 @@
 <button *ngIf="playlistId != 0" class="hover:bg-ac1/40 hover:shadow-md hover:shadow-neutral-800 p-2 rounded-2xl w-full" (click)="addSongToPlaylist()">
     <div class="flex gap-3">
         <img class="rounded-xl size-14" src={{coverPath}}>
-        <p>{{songId}}</p>
         <div class="grid grid-cols-1 text-left">
             <h1 class="w-32 text-xl truncate">{{playlistName}}</h1>
         </div>

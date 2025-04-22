@@ -28,7 +28,7 @@
             </button>
             <hr class="rounded-xl text-neutral-600">
             
-            <app-playlist-button *ngFor="let playlist of playlists" [playlistId]="playlist.id" playlistName={{playlist.name}} playlistDate={{playlist.creation_date}} playlistCoverPath={{playlist.cover_path}} [playlistIsStarred]=playlist.isStarred></app-playlist-button>
+            <app-playlist-button *ngFor="let playlist of playlists" [playlistId]="playlist.id" playlistName={{playlist.name}} playlistDate={{playlist.creation_date}} playlistCoverPath={{playlist.cover_path}} [playlistIsStarred]="playlist.isStarred"></app-playlist-button>
         </div>
         
     </div>

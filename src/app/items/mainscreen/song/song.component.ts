@@ -4,6 +4,8 @@ import { SongSendingService } from '../../../services/song-sending.service';
 import { CommonModule } from '@angular/common';
 import { SongAddingService } from '../../../services/song-adding.service';
 import { PlaylistComponent } from "../playlist-button/playlist/playlist.component";
+import { appDataDir } from '@tauri-apps/api/path';
+import { invoke } from '@tauri-apps/api/core';
 
 @Component({
   selector: 'app-song',
@@ -26,6 +28,8 @@ export class SongComponent {
   @Input() duration!: string;
   @Input() coverPath!: string;
   @Input() isStarred!: boolean;
+
+  @Input() playlistId!: number;
 
   coverUrl: string = 'assets/black.jpg';
 
@@ -61,6 +65,12 @@ export class SongComponent {
   addSongToPlaylist() {
     this.songAdding.getAllPlaylists();
     this.isModalOpen = true;
+  }
+
+  async removeSongFromPlaylist() {
+    const data_dir = await appDataDir();
+    invoke('remove_song_from_playlist', {playlist_id: this.playlistId, song_id: this.id, db_path: data_dir})
+    console.log("Canción Eliminada: " + this.id + " en: " + this.playlistId)
   }
 
   close() {
