@@ -7,7 +7,7 @@ import { appDataDir } from '@tauri-apps/api/path';
 })
 export class MainScreenStatusService {
   onHome = signal(true);
-  pId: string = "";
+  pId: number = 0;
   pName: string = "";
   pDate: string = "";
   pCoverPath: string = "";
@@ -19,13 +19,13 @@ export class MainScreenStatusService {
 
   setHome() {
     this.onHome.set(true);
-    this.pId = "";
+    this.pId = 0;
     this.pName = "";
     this.pDate = "";
     this.pCoverPath = "";
   }
 
-  setPlaylist(id:string, name:string, date:string, coverPath:string, isStarred:boolean) {
+  setPlaylist(id:number, name:string, date:string, coverPath:string, isStarred:boolean) {
     this.onHome.set(false);
     this.pId = id;
     this.pName = name;
@@ -44,6 +44,21 @@ export class MainScreenStatusService {
       this.songs = [];
     }
 
+  }
+
+  async getPlaylistSongs() {
+    const data_dir = await appDataDir();
+    try {
+      this.songs = await invoke<Song[]>('get_playlist_songs', {playlist_id: this.pId, db_path: data_dir});
+      //console.log(this.songs[0].coverPath)
+    } catch (error) {
+      console.error('Error fetching songs:', error);
+      this.songs = [];
+    }
+  }
+
+  async refresh() {
+    await this.getPlaylistSongs();
   }
 
 }

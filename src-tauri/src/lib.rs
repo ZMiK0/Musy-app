@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 use logic::add_playlist;
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use logic::add_song;
+use logic::remove_song;
+use logic::remove_a_playlist;
 use tauri_plugin_fs::FsExt;
 
 mod logic;
@@ -28,8 +30,30 @@ async fn get_all_songs(db_path:String) -> Result<Vec<Song>, String> {
 }
 
 #[tauri::command(rename_all = "snake_case")]
+async fn get_playlist_songs(playlist_id: i64, db_path: String) -> Result<Vec<Song>, String> {
+    let playlist_songs = logic::get_playlist_songs(playlist_id, db_path)?;
+
+    Ok(playlist_songs)
+}
+
+#[tauri::command(rename_all = "snake_case")]
 async fn create_playlist(name:String, cover_path:String, db_path:String) {
     let _ = add_playlist(name, cover_path, db_path);
+}
+
+#[tauri::command(rename_all = "snake_case")]
+async fn remove_playlist(playlist_id:i64, db_path:String) {
+    let _ = remove_a_playlist(playlist_id, db_path);
+}
+
+#[tauri::command(rename_all = "snake_case")]
+async fn add_song_to_playlist(playlist_id:i64, song_id:String, db_path:String) {
+    let _ = add_song(playlist_id, song_id, db_path);
+}
+
+#[tauri::command(rename_all = "snake_case")]
+async fn remove_song_from_playlist(playlist_id:i64, song_id:String, db_path:String) {
+    let _ = remove_song(playlist_id, song_id, db_path);
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -58,7 +82,7 @@ pub fn run() {
             
             Ok(())
          })
-        .invoke_handler(tauri::generate_handler![sync_lib,get_all_playlists,get_all_songs,create_playlist])
+        .invoke_handler(tauri::generate_handler![sync_lib, get_all_playlists, get_all_songs, get_playlist_songs,create_playlist, remove_playlist, add_song_to_playlist, remove_song_from_playlist])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

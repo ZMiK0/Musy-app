@@ -15,14 +15,14 @@
                 <img src={{mainScreenStatus.pCoverPath}} class="rounded-xl size-24">
                 <h1 class="pt-6 rounded-xl w-fit text-5xl text-start truncate">{{mainScreenStatus.pName}}</h1>
             </button>
-            <button class="flex gap-5 bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 hover:fill-neutral-300 mt-auto p-2 border-2 border-neutral-800 hover:border-ac1/40 rounded-xl w-12 h-12 hover:scale-105 duration-200 transform"> <!--Boton de añadir a la cola-->
+            <button class="flex gap-5 bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 mt-auto p-2 border-2 border-neutral-800 hover:border-ac1/40 rounded-xl w-12 h-12 hover:scale-105 duration-200 transform"> <!--Boton de añadir a la cola-->
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="pb-1 size-8"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>
             </button>
         </div>
         
         <hr class="text-neutral-600">
-        <div class="flex flex-col gap-2 bg-neutral-600/20 p-2 border-2 border-neutral-800 rounded-2xl w-full overflow-y-scroll scroll-smooth">
-            <app-song *ngFor="let song of mainScreenStatus.songs" id={{song.id}} path={{song.path}} title={{song.title}} artist={{song.artist}} album={{song.album}} year={{song.year}} duration={{song.duration}} coverPath={{song.coverPath}} [isStarred]="song.isStarred"></app-song>
+        <div class="flex flex-col gap-2 bg-neutral-600/20 p-2 border-2 border-neutral-800 rounded-2xl w-full h-full overflow-y-scroll scroll-smooth">
+            <app-song *ngFor="let song of mainScreenStatus.songs" [id]="song.id" path={{song.path}} title={{song.title}} artist={{song.artist}} album={{song.album}} year={{song.year}} duration={{song.duration}} coverPath={{song.coverPath}} [isStarred]="song.isStarred" [playlistId]="mainScreenStatus.pId"></app-song>
         </div>
     </div>
 </div>

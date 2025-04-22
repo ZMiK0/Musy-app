@@ -13,7 +13,6 @@ const DEFAULT_BLACK_IMAGE: &[u8] = include_bytes!("../black.jpg");
 
 fn create_dir(path:PathBuf) -> std::io::Result<()> {
     let new_path = path.join("covers");
-    println!("{}",new_path.display());
     fs::create_dir_all(&new_path).expect("Error");
     Ok(())
 }
@@ -42,18 +41,18 @@ fn create_db(path:PathBuf) -> std::io::Result<()> {
 
     conn.execute("create table if not exists song_playlist(
         playlist_id integer not null,
-        song_id integer not null,
+        song_id text not null,
         foreign key (playlist_id) references playlists(id) ON DELETE CASCADE,
         foreign key (song_id) references all_songs(id) ON DELETE CASCADE,
         primary key (playlist_id, song_id)
     );",() ).expect("ERROR4");
 
-conn.execute("INSERT OR REPLACE INTO playlists (id, name) VALUES (?1,?2);", (0,"All Songs",)).expect("ERROR WHILE INSERTING");
+    conn.execute("INSERT OR REPLACE INTO playlists (id, name) VALUES (?1,?2);", (0,"All Songs",)).expect("ERROR WHILE INSERTING");
 
 
     Ok(())
 
-}
+    }
 
 fn create_cover(path:PathBuf, title:&str, image:Option<Vec<u8>>) -> std::io::Result<PathBuf> {
 
@@ -110,7 +109,7 @@ fn insert_song(path:PathBuf , song_path:String, title:String, artist:String, alb
     let uuid = blake3::hash(title.as_ref());
 
     let conn = Connection::open(path.join("playlists.db")).expect("Error");
-    conn.execute("INSERT OR REPLACE INTO all_songs (id, path, title, artist, album, year, duration, cover_path) VALUES (?1,?2,?3,?4,?5,?6,?7,?8);", (uuid.to_string(), song_path, title, artist, album, year, new_duration, cover_path)).expect("ERROR WHILE INSERTING");
+    conn.execute("INSERT OR IGNORE INTO all_songs (id, path, title, artist, album, year, duration, cover_path) VALUES (?1,?2,?3,?4,?5,?6,?7,?8);", (uuid.to_string(), song_path, title, artist, album, year, new_duration, cover_path)).expect("ERROR WHILE INSERTING");
 }
 
 pub fn sync(path:PathBuf, music_path:PathBuf) -> std::io::Result<()> {
@@ -122,6 +121,7 @@ pub fn sync(path:PathBuf, music_path:PathBuf) -> std::io::Result<()> {
     Ok(())
 }
 
+/*
 fn clean(database_path: PathBuf) -> Result<()> {
     let conn = Connection::open(database_path.join("playlists.db"))?;
     let mut conn2 = Connection::open(database_path.join("playlists.db"))?;
@@ -147,6 +147,39 @@ fn clean(database_path: PathBuf) -> Result<()> {
     Ok(())
 
 }
+*/
+
+fn clean(database_path: PathBuf) -> Result<()> {
+    let mut conn = Connection::open(database_path.join("playlists.db"))?;
+
+    let rows: Vec<(String, String)> = {
+        let mut stmt = conn.prepare("SELECT id, path FROM all_songs")?;
+        let rows_iter = stmt.query_map([], |row| {
+            Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
+        })?;
+
+        let mut collected = Vec::new();
+        for row in rows_iter {
+            collected.push(row?);
+        }
+        collected
+    };
+
+    let tx = conn.transaction()?;
+
+    for (id, path_str) in rows {
+        println!("Checking path: {}", path_str);
+        println!("Path exists? {}", Path::new(&path_str).exists()); 
+        if !Path::new(&path_str).exists() {
+            println!("Removing song: {} - File not found: {}", id, path_str);
+            tx.execute("DELETE FROM all_songs WHERE id = ?", [id])?;
+        }
+    }
+
+    tx.commit()?;
+    println!("Operation completed.");
+    Ok(())
+}
 
 pub fn add_playlist(name:String, cover_path:String, db_path:String) -> Result<()> {
     let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
@@ -156,10 +189,26 @@ pub fn add_playlist(name:String, cover_path:String, db_path:String) -> Result<()
     Ok(())
 }
 
-pub fn add_song_to_playlist(playlist_id:i64, song_id:i64, db_path:String) -> Result<()> {
-    let conn = Connection::open(PathBuf::from(db_path))?;
+pub fn remove_a_playlist(playlist_id:i64, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
 
-    conn.execute("INSERT INTO song_playlist (playlist_id, song_id) VALUES (?1,?2);",(playlist_id, song_id)).expect("ERROR WHILE INSERTING SONG");
+    conn.execute("DELETE FROM playlists WHERE id = ?1",(playlist_id,)).expect("ERROR WHILE DELETING SONG");
+
+    Ok(())
+}
+
+pub fn add_song(playlist_id:i64, song_id:String, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
+
+    conn.execute("INSERT OR REPLACE INTO song_playlist (playlist_id, song_id) VALUES (?1,?2);",(playlist_id, song_id)).expect("ERROR WHILE INSERTING SONG");
+
+    Ok(())
+}
+
+pub fn remove_song(playlist_id:i64, song_id:String, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
+
+    conn.execute("DELETE FROM song_playlist WHERE playlist_id = ?1 AND song_id = ?2",(playlist_id, song_id)).expect("ERROR WHILE DELETING SONG");
 
     Ok(())
 }
@@ -232,4 +281,33 @@ pub fn get_all_songs(db_path:String) -> Result<Vec<Song>, String> {
 
     Ok(all_songs)
 
+}
+
+pub fn get_playlist_songs(playlist_id: i64, db_path: String) -> Result<Vec<Song>, String> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))
+        .map_err(|e| e.to_string())?;
+
+    let mut stmt = conn.prepare(
+        "SELECT s.id, s.path, s.title, s.artist, s.album, s.year, s.duration, s.cover_path, s.isStarred FROM all_songs s INNER JOIN song_playlist sp ON s.id = sp.song_id WHERE sp.playlist_id = ?1"
+    ).map_err(|e| e.to_string())?;
+
+    let playlist_songs = stmt
+        .query_map([playlist_id], |row| {
+            Ok(Song {
+                id:          row.get(0)?,
+                path:        row.get(1)?,
+                title:       row.get(2)?,
+                artist:      row.get(3)?,
+                album:       row.get(4)?,
+                year:        row.get(5)?,
+                duration:    row.get(6)?,
+                cover_path:  row.get(7)?,
+                is_starred:  row.get(8)?,
+            })
+        })
+        .map_err(|e| e.to_string())?
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(|e| e.to_string())?;
+
+    Ok(playlist_songs)
 }

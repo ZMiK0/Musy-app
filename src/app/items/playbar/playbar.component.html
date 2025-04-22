@@ -2,12 +2,12 @@
     <!--3 Divs, uno para la cancion, otro para el menu de control y otro para el volumen y extras-->
     <div class="flex justify-self-start gap-4 w-full">
         <div class="">
-            <img src="../../../assets/default.jpg" alt="" class="rounded-xl max-w-24 max-h-24">
+            <img src="{{songManagement.songCover}}" alt="" class="rounded-xl max-w-24 max-h-24">
         </div>
         <div>
             <div class="grid grid-cols-1 text-left">
-                <h1 class="text-3xl">Título</h1>
-                <p class="text-ac1/70 text-md">Artista</p>
+                <h1 class="w-sm 2xl:w-2xl text-3xl truncate">{{songManagement.songTitle}}</h1>
+                <p class="text-ac1/70 text-md">{{songManagement.songArtist}}</p>
             </div>
         </div>
     </div>

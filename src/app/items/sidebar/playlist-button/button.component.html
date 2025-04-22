@@ -1,9 +1,26 @@
-<button class="hover:bg-ac1/40 hover:shadow-md hover:shadow-neutral-800 p-2 rounded-2xl w-full" (click)="setPlaylistOnMainScreen()">
-    <div class="flex gap-3">
-        <img class="rounded-xl size-14" src={{playlistCoverPath}}>
-        <div class="grid grid-cols-1 text-left">
-            <h1 class="w-32 text-xl truncate">{{playlistName}}</h1>
-            <p class="text-neutral-400 text-sm">{{playlistDate}}</p>
+<div class="flex hover:bg-ac1/40 hover:shadow-md hover:shadow-neutral-800 p-2 rounded-2xl w-full hover:scale-105 duration-200 transform">
+    <button (click)="setPlaylistOnMainScreen()">
+        <div class="flex gap-3">
+            <img class="rounded-xl size-14" src={{coverPath}}>
+            <div class="grid grid-cols-1 text-left">
+                <h1 class="w-32 text-xl truncate">{{playlistName}}</h1>
+                <p class="text-neutral-400 text-sm">{{playlistDate}}</p>
+            </div>
+            
+        </div>
+    </button>
+    <div class="inline-block z-2 relative" *ngIf="playlistId != 0">
+        <button class="flex gap-5 bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 hover:fill-neutral-300 mt-auto border-2 border-neutral-800 hover:border-ac1/40 rounded-md size-6 hover:scale-105 duration-200" (click)="toggleDropDown()"> <!--Boton menu-->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="mr-0.5 ml-auto size-4"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M233.4 406.6c12.5 12.5 32.8 12.5 45.3 0l192-192c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 338.7 86.6 169.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l192 192z"/></svg>
+        </button>
+
+        <div *ngIf="isDropDownOpen" (click)="closeDropDown()" class="right-0 z-10 absolute flex flex-col gap-2 bg-neutral-800 mt-2 p-2 border-1 border-neutral-700 rounded-2xl w-48 origin-top-right" role="menu" tabindex="-1">
+            <button class="gap-5 bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-300 hover:fill-ac1 hover:fill-ac1 border-2 border-neutral-800 hover:border-ac1/40 rounded-xl w-full h-10 hover:scale-105 duration-200" (click)="removePlaylist()">
+                <div class="flex gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="mt-0.5 ml-1 size-5"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/></svg>
+                    <p class="mr-1.5">Remove playlist</p>
+                </div>
+            </button>
         </div>
     </div>
-</button>
+</div>

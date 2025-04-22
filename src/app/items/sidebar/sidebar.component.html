@@ -1,4 +1,4 @@
-<div class="flex flex-col grid-rows-1 rounded-2xl min-w-64 h-full">
+<div class="flex flex-col grid-rows-1 rounded-2xl min-w-72 h-full">
     <div class="flex flex-col gap-4 bg-neutral-900 p-4 rounded-2xl h-full">
         <div class="flex justify-between">
             <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 rounded-2xl h-12 hover:scale-105 duration-200 transform" (click)="setHome()">
@@ -28,13 +28,13 @@
             </button>
             <hr class="rounded-xl text-neutral-600">
             
-            <app-playlist-button *ngFor="let playlist of playlists" playlistName={{playlist.name}} playlistDate={{playlist.creation_date}} playlistCoverPath={{getCoverPath(playlist.cover_path)}} [playlistIsStarred]=playlist.isStarred></app-playlist-button>
+            <app-playlist-button [refreshFn]="refresh.bind(this)" *ngFor="let playlist of playlists" [playlistId]="playlist.id" playlistName={{playlist.name}} playlistDate={{playlist.creation_date}} playlistCoverPath={{playlist.cover_path}} [playlistIsStarred]="playlist.isStarred"></app-playlist-button>
         </div>
         
     </div>
-    <div *ngIf="this.modal.isOpen" class="z-50 fixed inset-0 flex justify-center items-center bg-black/60 transition-opacity duration-300">
+    <div *ngIf="this.isModalOpen" class="z-50 fixed inset-0 flex justify-center items-center bg-black/60 transition-opacity duration-300">
         <div class="flex flex-col gap-2 bg-neutral-900 p-2 border-2 border-neutral-800 rounded-2xl h-60">
-            <input type="text" (input)="this.modal.onInput($event)" class="p-2 border-1 border-neutral-600 rounded-md" placeholder="Name...">
+            <input type="text" (input)="this.onInput($event)" class="p-2 border-1 border-neutral-600 rounded-md" placeholder="Name...">
             <button (click)="selectCover()" class="bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 border-2 border-neutral-800 hover:border-ac1/40 rounded-2xl w-full h-fit hover:scale-105 duration-200 transform">Select Cover</button> 
             <div class="flex gap-4 mt-auto">
                 <button (click)="close()" class="bg-neutral-600/20 hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 border-2 border-neutral-800 hover:border-ac1/40 rounded-2xl w-full h-fit hover:scale-105 duration-200 transform">Close</button>
