@@ -57,6 +57,10 @@ export class MainScreenStatusService {
     }
   }
 
+  async refresh() {
+    await this.getPlaylistSongs();
+  }
+
 }
 
 interface Song {

@@ -19,7 +19,6 @@ fn create_dir(path:PathBuf) -> std::io::Result<()> {
 
 fn create_db(path:PathBuf) -> std::io::Result<()> {
     let conn = Connection::open(path.join("playlists.db")).expect("Error");
-    conn.execute("PRAGMA foreign_keys = ON;", []).expect("Failed to enable foreign keys");
     conn.execute("create table if not exists all_songs(
         id text primary key not null,
         path text not null,
@@ -186,6 +185,14 @@ pub fn add_playlist(name:String, cover_path:String, db_path:String) -> Result<()
     let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
 
     conn.execute("INSERT INTO playlists (name, cover_path) VALUES (?1, ?2);", (name, cover_path)).expect("ERROR WHILE INSERTING");
+
+    Ok(())
+}
+
+pub fn remove_a_playlist(playlist_id:i64, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
+
+    conn.execute("DELETE FROM playlists WHERE id = ?1",(playlist_id,)).expect("ERROR WHILE DELETING SONG");
 
     Ok(())
 }

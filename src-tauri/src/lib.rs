@@ -2,6 +2,7 @@ use std::path::PathBuf;
 use logic::add_playlist;
 use logic::add_song;
 use logic::remove_song;
+use logic::remove_a_playlist;
 use tauri_plugin_fs::FsExt;
 
 mod logic;
@@ -41,6 +42,11 @@ async fn create_playlist(name:String, cover_path:String, db_path:String) {
 }
 
 #[tauri::command(rename_all = "snake_case")]
+async fn remove_playlist(playlist_id:i64, db_path:String) {
+    let _ = remove_a_playlist(playlist_id, db_path);
+}
+
+#[tauri::command(rename_all = "snake_case")]
 async fn add_song_to_playlist(playlist_id:i64, song_id:String, db_path:String) {
     let _ = add_song(playlist_id, song_id, db_path);
 }
@@ -76,7 +82,7 @@ pub fn run() {
             
             Ok(())
          })
-        .invoke_handler(tauri::generate_handler![sync_lib, get_all_playlists, get_all_songs, get_playlist_songs,create_playlist, add_song_to_playlist, remove_song_from_playlist])
+        .invoke_handler(tauri::generate_handler![sync_lib, get_all_playlists, get_all_songs, get_playlist_songs,create_playlist, remove_playlist, add_song_to_playlist, remove_song_from_playlist])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

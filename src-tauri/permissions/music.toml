@@ -10,7 +10,8 @@ commands.allow = [
     "get_playlist_songs",
     "create_playlist",
     "add_song_to_playlist",
-    "remove_song_from_playlist"
+    "remove_song_from_playlist",
+    "remove_playlist"
 ]
 
 [[scope.allow]]

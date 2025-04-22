@@ -1,4 +1,4 @@
-<div class="flex flex-col grid-rows-1 rounded-2xl min-w-64 h-full">
+<div class="flex flex-col grid-rows-1 rounded-2xl min-w-72 h-full">
     <div class="flex flex-col gap-4 bg-neutral-900 p-4 rounded-2xl h-full">
         <div class="flex justify-between">
             <button class="hover:bg-ac1/40 hover:shadow-lg hover:shadow-neutral-800 fill-neutral-600 hover:fill-ac1 p-2 rounded-2xl h-12 hover:scale-105 duration-200 transform" (click)="setHome()">
@@ -28,7 +28,7 @@
             </button>
             <hr class="rounded-xl text-neutral-600">
             
-            <app-playlist-button *ngFor="let playlist of playlists" [playlistId]="playlist.id" playlistName={{playlist.name}} playlistDate={{playlist.creation_date}} playlistCoverPath={{playlist.cover_path}} [playlistIsStarred]="playlist.isStarred"></app-playlist-button>
+            <app-playlist-button [refreshFn]="refresh.bind(this)" *ngFor="let playlist of playlists" [playlistId]="playlist.id" playlistName={{playlist.name}} playlistDate={{playlist.creation_date}} playlistCoverPath={{playlist.cover_path}} [playlistIsStarred]="playlist.isStarred"></app-playlist-button>
         </div>
         
     </div>

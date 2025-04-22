@@ -38,7 +38,7 @@ export class SidebarComponent {
     console.log(music_dir)
     console.log(data_dir)
     await invoke('sync_lib', {music_dir: music_dir, app_data_dir: data_dir})
-    this.playlists = await this.getAllPlaylists();
+    this.refresh()
 
   }
 
@@ -138,8 +138,12 @@ export class SidebarComponent {
     invoke('create_playlist', {name: this.name, cover_path: this.coverPath, db_path: data_dir})
     console.log("Playlist creada")
     this.close()
-    this.playlists = await this.getAllPlaylists();
+    this.refresh()
     this.coverPath = "assets/black.jpg"
+  }
+
+  async refresh() {
+    this.playlists = await this.getAllPlaylists();
   }
 
   close() {
