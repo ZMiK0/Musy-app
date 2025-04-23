@@ -33,8 +33,8 @@ export class SongManagementService {
   loopMode:string = "none" //* none - playlist - single
   shuffle:boolean = false
 
-  queue:string[] = [] //!Aqui lo que se va a reproducir, y no es una queue de verdad ES UNA LISTA (no implementar funciones de queue)
-  queueSave:string[] = []
+  queue:Song[] = [] //!Aqui lo que se va a reproducir, y no es una queue de verdad ES UNA LISTA (no implementar funciones de queue)
+  queueSave:Song[] = []
   currentIndex:number = 0
   currentIndexSave:number = 0
   currentISDelay:number = 0
@@ -48,27 +48,53 @@ export class SongManagementService {
     });
   }
 
-  setQueue(songs:string[], title:string[], artist:string[], coverPath:string[]) {
+
+
+  setQueue(songs:Song[]) {
     this.queue = [...songs];
     this.currentIndex = 0;
+    this.loadAndPlay(this.queue[0].path, 0);
   }
 
-  addQueue(songs: string[], title:string[], artist:string[], coverPath:string[]) {}
+  addQueue(songs: Song[]) {
+    this.queue.push(...songs)
+  }
 
-  setOneSong(song:string, title:string, artist:string, coverPath:string) {
-    this.queue = []
-    this.queue.push(song)
+  setOneSong(song:Song) {
+    this.queue = [];
+    this.queue.push(song);
     this.currentIndex = 0;
-    this.songTitle = title;
-    this.songArtist = artist;
-    this.songCover = coverPath;
-    this.loadAndPlay(this.queue[0])
+    this.loadAndPlay(this.queue[0].path, 0);
   }
 
-  addOneSong(song:string, title:string, artist:string, coverPath:string) {}
+  addOneSong(song:Song) {
+    this.queue.push(song);
+  }
 
-  async loadAndPlay(_path:string) {
+  async getCoverPath(coverPath:string): Promise<string> {
+    let coverUrl: string = 'assets/black.jpg';
+    if (!coverPath) return coverUrl;
+    console.log("Hola")
+
+    const fileData = await readFile(coverPath);
+    
+    const blob = new Blob([fileData], { type: 'image/jpeg' });
+
+    if (coverUrl) {
+      URL.revokeObjectURL(coverUrl);
+    }
+
+    return URL.createObjectURL(blob);
+
+  }
+
+  async loadAndPlay(_path:string, _index:number) {
     try {
+      this.songTitle = this.queue[_index].title;
+      this.songArtist = this.queue[_index].artist;
+      
+      this.songCover = await this.getCoverPath(this.queue[_index].coverPath);
+
       const path = _path;
       
       const fileData = await readFile(path);
@@ -85,7 +111,6 @@ export class SongManagementService {
     }
   }
 
-  //["/home/belz/Música/DoItForHer.mp3","/home/belz/Música/IntoTheSky.mp3","/home/belz/Música/TornadoOfSouls.mp3"]
   async togglePlayPause() {
     if(!this.isPlaying) {
       this.song.play()
@@ -99,10 +124,10 @@ export class SongManagementService {
     if ((this.currentIndex < this.queue.length - 1) && (this.loopMode == "none" || this.loopMode == "playlist")) {
       this.currentIndex++;
       this.currentISDelay++;
-      this.loadAndPlay(this.queue[this.currentIndex]);
+      this.loadAndPlay(this.queue[this.currentIndex].path, this.currentIndex);
     } else if ((this.currentIndex == this.queue.length - 1) && this.loopMode == "playlist") {
       this.currentIndex = 0;
-      this.loadAndPlay(this.queue[this.currentIndex]);
+      this.loadAndPlay(this.queue[this.currentIndex].path, this.currentIndex);
     } else if (this.loopMode == "single") {
       this.song.currentTime = 0
     } else {
@@ -116,11 +141,11 @@ export class SongManagementService {
       if((this.currentIndex > 0) && this.loopMode != "single") {
         this.currentIndex--;
         this.currentISDelay--;
-        this.loadAndPlay(this.queue[this.currentIndex]);
+        this.loadAndPlay(this.queue[this.currentIndex].path, this.currentIndex);
       } else if (this.currentIndex == 0) {
         if (this.loopMode == "playlist") {
           this.currentIndex = this.queue.length - 1
-          this.loadAndPlay(this.queue[this.currentIndex]);
+          this.loadAndPlay(this.queue[this.currentIndex].path, this.currentIndex);
         } else if(this.loopMode == "single") {
           this.song.currentTime = 0
         } else {
@@ -132,7 +157,6 @@ export class SongManagementService {
     } else {
       this.song.currentTime = 0
     }
-    console.log("CurrentIndex: " + this.currentIndex + " CurrentIndexSave: " + this.currentIndexSave)
   }
 
   stop() {
@@ -226,4 +250,16 @@ export class SongManagementService {
     
   }
 
+}
+
+interface Song {
+  id:string,
+  path:string,
+  title:string,
+  artist:string,
+  album:string,
+  year:string,
+  duration:string,
+  coverPath:string,
+  isStarred:boolean
 }

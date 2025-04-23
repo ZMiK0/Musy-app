@@ -7,6 +7,7 @@ import { PlaylistComponent } from "../playlist-button/playlist/playlist.componen
 import { appDataDir } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
 import { MainScreenStatusService } from '../../../services/main-screen-status.service';
+import { SongManagementService } from '../../../services/song-management.service';
 
 @Component({
   selector: 'app-song',
@@ -20,7 +21,7 @@ export class SongComponent {
 
   isDropDownOpen: boolean = false;
 
-  constructor (public songSending:SongSendingService, public songAdding:SongAddingService, public mainScreenStatus:MainScreenStatusService) {}
+  constructor (public songManagement:SongManagementService, public songAdding:SongAddingService, public mainScreenStatus:MainScreenStatusService) {}
 
   @Input() id!: string;
   @Input() path!: string;
@@ -55,14 +56,15 @@ export class SongComponent {
     return URL.createObjectURL(blob);
 
   }
-
+  //this.path,this.title,this.artist,this.coverUrl
   playSong() {
-    this.songSending.setSong(this.path,this.title,this.artist,this.coverUrl)
-    console.log("Sending song: " + this.path);
+    let song:Song = {id: this.id, path: this.path, title:this.title, artist: this.artist, album: this.album, year: this.year, duration: this.duration, coverPath: this.coverPath, isStarred: this.isStarred };
+    this.songManagement.setOneSong(song);
   }
 
   addSongToQueue() {
-
+    let song:Song = {id: this.id, path: this.path, title:this.title, artist: this.artist, album: this.album, year: this.year, duration: this.duration, coverPath: this.coverPath, isStarred: this.isStarred };
+    this.songManagement.addOneSong(song);
   }
 
   addSongToPlaylist() {
@@ -98,4 +100,16 @@ export class SongComponent {
     }
   }
 
+}
+
+interface Song {
+  id:string,
+  path:string,
+  title:string,
+  artist:string,
+  album:string,
+  year:string,
+  duration:string,
+  coverPath:string,
+  isStarred:boolean
 }
