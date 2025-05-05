@@ -16,6 +16,10 @@ import { appDataDir } from '@tauri-apps/api/path';
 export class MainScreenComponent {
   
   constructor (public mainScreenStatus:MainScreenStatusService) {}
-  
+
+  async ngOnInit() {
+    this.mainScreenStatus.setHome();
+  }
+
 }
 
