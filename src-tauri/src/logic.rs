@@ -213,6 +213,22 @@ pub fn remove_song(playlist_id:i64, song_id:String, db_path:String) -> Result<()
     Ok(())
 }
 
+pub fn add_starred(song_id:String, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
+
+    conn.execute("UPDATE all_songs SET isStarred = 1 WHERE id = ?",(song_id,)).expect("ERROR WHILE MODIFIYING STARRED");
+
+    Ok(())
+}
+
+pub fn remove_starred(song_id:String, db_path:String) -> Result<()> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db"))?;
+
+    conn.execute("UPDATE all_songs SET isStarred = 0 WHERE id = ?",(song_id,)).expect("ERROR WHILE MODIFIYING STARRED");
+
+    Ok(())
+}
+
 #[derive(serde::Serialize)]
 pub struct Playlist {
     id: i64,
@@ -262,6 +278,31 @@ pub fn get_all_songs(db_path:String) -> Result<Vec<Song>, String> {
     let conn = Connection::open(PathBuf::from(db_path).join("playlists.db")).map_err(|e| e.to_string())?;
 
     let mut stmt = conn.prepare("SELECT id, path, title, artist, album, year, duration, cover_path, isStarred FROM all_songs").map_err(|e| e.to_string())?;
+
+    let all_songs = stmt.query_map([], |row| {
+        Ok(Song {
+            id: row.get(0)?,
+            path: row.get(1)?,
+            title: row.get(2)?,
+            artist: row.get(3)?,
+            album: row.get(4)?,
+            year: row.get(5)?,
+            duration: row.get(6)?,
+            cover_path: row.get(7)?,
+            is_starred: row.get(8)?,
+        })
+    }).map_err(|e| e.to_string())?
+    .collect::<Result<Vec<_>, _>>()
+    .map_err(|e| e.to_string())?;
+
+    Ok(all_songs)
+
+}
+
+pub fn get_all_songs_starred(db_path:String) -> Result<Vec<Song>, String> {
+    let conn = Connection::open(PathBuf::from(db_path).join("playlists.db")).map_err(|e| e.to_string())?;
+
+    let mut stmt = conn.prepare("SELECT id, path, title, artist, album, year, duration, cover_path, isStarred FROM all_songs WHERE isStarred = 1").map_err(|e| e.to_string())?;
 
     let all_songs = stmt.query_map([], |row| {
         Ok(Song {

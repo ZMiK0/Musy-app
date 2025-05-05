@@ -1,8 +1,10 @@
 use std::path::PathBuf;
 use logic::add_playlist;
 use logic::add_song;
+use logic::add_starred;
 use logic::remove_song;
 use logic::remove_a_playlist;
+use logic::remove_starred;
 use tauri_plugin_fs::FsExt;
 
 mod logic;
@@ -37,6 +39,13 @@ async fn get_playlist_songs(playlist_id: i64, db_path: String) -> Result<Vec<Son
 }
 
 #[tauri::command(rename_all = "snake_case")]
+async fn get_all_starred(db_path:String) -> Result<Vec<Song>, String> {
+    let all_songs = logic::get_all_songs_starred(db_path)?;
+
+    Ok(all_songs)
+}
+
+#[tauri::command(rename_all = "snake_case")]
 async fn create_playlist(name:String, cover_path:String, db_path:String) {
     let _ = add_playlist(name, cover_path, db_path);
 }
@@ -54,6 +63,16 @@ async fn add_song_to_playlist(playlist_id:i64, song_id:String, db_path:String) {
 #[tauri::command(rename_all = "snake_case")]
 async fn remove_song_from_playlist(playlist_id:i64, song_id:String, db_path:String) {
     let _ = remove_song(playlist_id, song_id, db_path);
+}
+
+#[tauri::command(rename_all = "snake_case")]
+async fn add_is_starred(song_id:String, db_path:String) {
+    let _ = add_starred(song_id, db_path);
+}
+
+#[tauri::command(rename_all = "snake_case")]
+async fn remove_is_starred(song_id:String, db_path:String) {
+    let _ = remove_starred(song_id, db_path);
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -82,7 +101,7 @@ pub fn run() {
             
             Ok(())
          })
-        .invoke_handler(tauri::generate_handler![sync_lib, get_all_playlists, get_all_songs, get_playlist_songs,create_playlist, remove_playlist, add_song_to_playlist, remove_song_from_playlist])
+        .invoke_handler(tauri::generate_handler![sync_lib, get_all_playlists, get_all_songs, get_playlist_songs, get_all_starred,create_playlist, remove_playlist, add_song_to_playlist, remove_song_from_playlist, add_is_starred, remove_is_starred])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

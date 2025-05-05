@@ -1,6 +1,5 @@
 import { Component, HostListener, Input } from '@angular/core';
 import { readFile } from '@tauri-apps/plugin-fs';
-import { SongSendingService } from '../../../services/song-sending.service';
 import { CommonModule } from '@angular/common';
 import { SongAddingService } from '../../../services/song-adding.service';
 import { PlaylistComponent } from "../playlist-button/playlist/playlist.component";
@@ -98,6 +97,20 @@ export class SongComponent {
     if (!target.closest('.relative.inline-block')) {
       this.closeDropDown();
     }
+  }
+
+  async toggleStarred() {
+    const data_dir = await appDataDir();
+    
+    if (this.isStarred) {
+      invoke('remove_is_starred', {song_id: this.id, db_path: data_dir});
+      console.log("Canción !Starred: " + this.id);
+    } else {
+      invoke('add_is_starred', {song_id: this.id, db_path: data_dir});
+      console.log("Canción Starred: " + this.id);
+    }
+
+    this.mainScreenStatus.refresh();
   }
 
 }

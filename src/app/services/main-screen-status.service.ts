@@ -2,7 +2,6 @@ import { Injectable, signal } from '@angular/core';
 import { invoke } from '@tauri-apps/api/core';
 import { appDataDir } from '@tauri-apps/api/path';
 import { SongManagementService } from './song-management.service';
-import { readFile } from '@tauri-apps/plugin-fs';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +25,7 @@ export class MainScreenStatusService {
     this.pName = "";
     this.pDate = "";
     this.pCoverPath = "";
+    this.getAllStarred();
   }
 
   setPlaylist(id:number, name:string, date:string, coverPath:string, isStarred:boolean) {
@@ -99,6 +99,17 @@ export class MainScreenStatusService {
 
   }
 
+  async getAllStarred() {
+    const data_dir = await appDataDir();
+    try {
+      this.songs = await invoke<Song[]>('get_all_starred', {db_path: data_dir});
+    } catch (error) {
+      console.error('Error fetching songs:', error);
+      this.songs = [];
+    }
+
+  }
+
   async getPlaylistSongs() {
     const data_dir = await appDataDir();
     try {
@@ -110,7 +121,14 @@ export class MainScreenStatusService {
   }
 
   async refresh() {
-    await this.getPlaylistSongs();
+    if (this.pId != 0) {
+      await this.getPlaylistSongs();
+    } else if (this.pId == 0 && this.onHome()) {
+      await this.getAllStarred();
+    } else {
+      await this.getAllSongs();
+    }
+    
   }
 
   playQueue() {

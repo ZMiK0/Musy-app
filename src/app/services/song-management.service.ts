@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { readFile } from '@tauri-apps/plugin-fs';
 import { audioDir } from '@tauri-apps/api/path';
-import { SongSendingService } from './song-sending.service';
 import { invoke } from '@tauri-apps/api/core';
 
 @Injectable({
