@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { invoke } from "@tauri-apps/api/core";
-import { SongSendingService } from '../../services/song-sending.service';
 import { SongComponent } from "./song/song.component";
 import { MainScreenStatusService } from '../../services/main-screen-status.service';
 import { HomeitemComponent } from "./homeitem/homeitem.component";
@@ -17,6 +16,10 @@ import { appDataDir } from '@tauri-apps/api/path';
 export class MainScreenComponent {
   
   constructor (public mainScreenStatus:MainScreenStatusService) {}
-  
+
+  async ngOnInit() {
+    this.mainScreenStatus.setHome();
+  }
+
 }
 

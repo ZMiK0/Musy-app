@@ -1,12 +1,12 @@
 import { Component, HostListener, Input } from '@angular/core';
 import { readFile } from '@tauri-apps/plugin-fs';
-import { SongSendingService } from '../../../services/song-sending.service';
 import { CommonModule } from '@angular/common';
 import { SongAddingService } from '../../../services/song-adding.service';
 import { PlaylistComponent } from "../playlist-button/playlist/playlist.component";
 import { appDataDir } from '@tauri-apps/api/path';
 import { invoke } from '@tauri-apps/api/core';
 import { MainScreenStatusService } from '../../../services/main-screen-status.service';
+import { SongManagementService } from '../../../services/song-management.service';
 
 @Component({
   selector: 'app-song',
@@ -20,7 +20,7 @@ export class SongComponent {
 
   isDropDownOpen: boolean = false;
 
-  constructor (public songSending:SongSendingService, public songAdding:SongAddingService, public mainScreenStatus:MainScreenStatusService) {}
+  constructor (public songManagement:SongManagementService, public songAdding:SongAddingService, public mainScreenStatus:MainScreenStatusService) {}
 
   @Input() id!: string;
   @Input() path!: string;
@@ -55,14 +55,15 @@ export class SongComponent {
     return URL.createObjectURL(blob);
 
   }
-
+  //this.path,this.title,this.artist,this.coverUrl
   playSong() {
-    this.songSending.setSong(this.path,this.title,this.artist,this.coverUrl)
-    console.log("Sending song: " + this.path);
+    let song:Song = {id: this.id, path: this.path, title:this.title, artist: this.artist, album: this.album, year: this.year, duration: this.duration, coverPath: this.coverPath, isStarred: this.isStarred };
+    this.songManagement.setOneSong(song);
   }
 
   addSongToQueue() {
-
+    let song:Song = {id: this.id, path: this.path, title:this.title, artist: this.artist, album: this.album, year: this.year, duration: this.duration, coverPath: this.coverPath, isStarred: this.isStarred };
+    this.songManagement.addOneSong(song);
   }
 
   addSongToPlaylist() {
@@ -98,4 +99,30 @@ export class SongComponent {
     }
   }
 
+  async toggleStarred() {
+    const data_dir = await appDataDir();
+    
+    if (this.isStarred) {
+      invoke('remove_is_starred', {song_id: this.id, db_path: data_dir});
+      console.log("Canción !Starred: " + this.id);
+    } else {
+      invoke('add_is_starred', {song_id: this.id, db_path: data_dir});
+      console.log("Canción Starred: " + this.id);
+    }
+
+    this.mainScreenStatus.refresh();
+  }
+
+}
+
+interface Song {
+  id:string,
+  path:string,
+  title:string,
+  artist:string,
+  album:string,
+  year:string,
+  duration:string,
+  coverPath:string,
+  isStarred:boolean
 }
