@@ -10,7 +10,7 @@
             </button>
         </div>
         <hr class="text-neutral-600">
-        <div class="flex justify-items-center p-2 rounded-2xl w-full overflow-y-scroll scroll-smooth">
+        <div class="flex flex-wrap justify-items-center p-2 rounded-2xl w-full overflow-y-scroll scroll-smooth">
             <app-homeitem *ngFor="let song of mainScreenStatus.songs" [id]="song.id" path={{song.path}} title={{song.title}} artist={{song.artist}} album={{song.album}} year={{song.year}} duration={{song.duration}} coverPath={{song.coverPath}} [isStarred]="song.isStarred" [playlistId]="mainScreenStatus.pId"></app-homeitem>
         </div>
     </div>
