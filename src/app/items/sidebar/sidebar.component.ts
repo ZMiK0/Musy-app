@@ -8,11 +8,12 @@ import { SongManagementService } from '../../services/song-management.service';
 import { open } from '@tauri-apps/plugin-dialog';
 import { readFile, writeFile } from '@tauri-apps/plugin-fs';
 import { mkdir } from '@tauri-apps/plugin-fs';
+import { SongComponent } from '../mainscreen/song/song.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, ButtonComponent],
+  imports: [CommonModule, ButtonComponent, SongComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: '../../../styles.css'
 })
@@ -20,6 +21,8 @@ export class SidebarComponent {
   playlists: Playlist[] = []
   name:string = ""
   isModalOpen:boolean = false;
+  isModalOpenSearch:boolean = false;
+  songs:Song[] = []
   coverPath: string = "assets/black.jpg"
 
   constructor (public mainScreenStatus:MainScreenStatusService, public songManagement:SongManagementService) {}
@@ -54,6 +57,20 @@ export class SidebarComponent {
 
   newPlaylist() {
     this.isModalOpen = true;
+  }
+
+  close() {
+    this.isModalOpen = false;
+  }
+
+  searchSong() {
+    this.isModalOpenSearch = true;
+    this.getAllSongs();
+  }
+
+  closeSearch() {
+    this.isModalOpenSearch = false;
+    this.songs = []
   }
 
   async onInput(event: Event) {
@@ -146,13 +163,18 @@ export class SidebarComponent {
     this.playlists = await this.getAllPlaylists();
   }
 
-  close() {
-    this.isModalOpen = false
-  }
+  async getAllSongs() {
+      const data_dir = await appDataDir();
+      try {
+        this.songs = await invoke<Song[]>('get_all_songs', {db_path: data_dir});
+      } catch (error) {
+        console.error('Error fetching songs:', error);
+        this.songs = [];
+      }
+  
+    }
   
 }
-
-
 
 interface Playlist {
   id: number;
@@ -160,4 +182,16 @@ interface Playlist {
   creation_date: string;
   cover_path: string;
   isStarred: boolean;
+}
+
+interface Song {
+  id:string,
+  path:string,
+  title:string,
+  artist:string,
+  album:string,
+  year:string,
+  duration:string,
+  coverPath:string,
+  isStarred:boolean
 }

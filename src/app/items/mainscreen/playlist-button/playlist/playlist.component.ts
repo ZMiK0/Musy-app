@@ -47,5 +47,6 @@ export class PlaylistComponent {
     const data_dir = await appDataDir();
     invoke('add_song_to_playlist', {playlist_id: this.playlistId, song_id: this.songId, db_path: data_dir})
     console.log("Canción añadida: " + this.songId + " en: " + this.playlistName)
+    this.mainScreenStatus.refresh();
   }
 }
