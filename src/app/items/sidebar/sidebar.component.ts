@@ -23,6 +23,7 @@ export class SidebarComponent {
   isModalOpen:boolean = false;
   isModalOpenSearch:boolean = false;
   songs:Song[] = []
+  filteredSongs:Song[] = []
   coverPath: string = "assets/black.jpg"
 
   constructor (public mainScreenStatus:MainScreenStatusService, public songManagement:SongManagementService) {}
@@ -63,14 +64,16 @@ export class SidebarComponent {
     this.isModalOpen = false;
   }
 
-  searchSong() {
+  async searchSong() {
+    await this.getAllSongs();
+    this.filteredSongs = this.songs;
     this.isModalOpenSearch = true;
-    this.getAllSongs();
   }
 
   closeSearch() {
     this.isModalOpenSearch = false;
     this.songs = []
+    this.filteredSongs = []
   }
 
   async onInput(event: Event) {
@@ -78,6 +81,16 @@ export class SidebarComponent {
     const newName = input.value;
     this.name = newName;
     console.log(this.name)
+  }
+
+  async onInputSearch(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const searchTerm = input.value.toLowerCase();
+    console.log(this.name)
+
+    this.filteredSongs = this.songs.filter(song => 
+      song.title.toLowerCase().includes(searchTerm) || song.artist.toLowerCase().includes(searchTerm) || song.album.toLowerCase().includes(searchTerm)
+    );
   }
 
   async createThumbnail(blob: Blob, maxWidth: number, maxHeight: number): Promise<Uint8Array> {
