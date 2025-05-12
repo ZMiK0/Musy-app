@@ -12,7 +12,6 @@ use lofty::tag::Accessor;
 const DEFAULT_BLACK_IMAGE: &[u8] = include_bytes!("../black.jpg");
 
 fn create_dir(path:PathBuf) -> std::io::Result<()> {
-    fs::create_dir_all(&path).expect("Error");
     let new_path = path.join("covers");
     fs::create_dir_all(&new_path).expect("Error");
     Ok(())
@@ -114,8 +113,8 @@ fn insert_song(path:PathBuf , song_path:String, title:String, artist:String, alb
 }
 
 pub fn sync(path:PathBuf, music_path:PathBuf) -> std::io::Result<()> {
-    create_db(path.clone())?;
     create_dir(path.clone())?;
+    create_db(path.clone())?;
     clean(path.clone()).unwrap();
     walk_dir(music_path, path.clone())?;
 
