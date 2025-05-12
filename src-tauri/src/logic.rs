@@ -80,7 +80,7 @@ fn walk_dir(path:PathBuf, data_path:PathBuf) -> std::io::Result<()> {
 }
 
 fn is_music(entry: &DirEntry) -> bool {
-    entry.file_name().to_str().map(|s| {s.ends_with(".mp3") || s.ends_with(".ogg")}).unwrap_or(false) || entry.file_type().is_dir()
+    entry.file_name().to_str().map(|s| {s.ends_with(".mp3") || s.ends_with(".ogg") || s.ends_with(".wav") || s.ends_with(".flac") || s.ends_with(".aac")}).unwrap_or(false) || entry.file_type().is_dir()
 }
 
 fn extract_metadata(path:&str, cover_path:PathBuf) -> std::io::Result<(String, String, String, String, u128, String)> {
